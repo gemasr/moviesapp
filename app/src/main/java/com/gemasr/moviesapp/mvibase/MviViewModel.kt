@@ -1,4 +1,4 @@
-package com.heetch.mvibase
+package com.gemasr.moviesapp.mvibase
 import io.reactivex.Observable
 
 /**

@@ -28,6 +28,14 @@ class MoviesRepository(val remoteMoviesDataSource: RemoteMoviesDataSource,
     }
 
 
+    override fun getByType(page: Int, type: MovieListType): Single<List<Movie>> {
+        return when(type){
+            MovieListType.POPULAR -> getPopularMovies(page)
+            MovieListType.UPCOMING -> getUpcomingMovies(page)
+            MovieListType.TOP_RATED -> getTopRatedMovies(page)
+        }
+    }
+
     override fun getPopularMovies(page: Int): Single<List<Movie>> {
         return localMoviesDataSource.getPopularMovies(page).onErrorReturn {
             getAndCacheMovies(page, MovieListType.POPULAR)
@@ -47,5 +55,9 @@ class MoviesRepository(val remoteMoviesDataSource: RemoteMoviesDataSource,
             getAndCacheMovies(page, MovieListType.TOP_RATED)
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    override fun getMovieById(id: Int, type: MovieListType): Single<Movie> {
+        return localMoviesDataSource.getMovieById(id, type)
     }
 }

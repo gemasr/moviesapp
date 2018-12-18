@@ -1,4 +1,4 @@
-package com.heetch.mvibase
+package com.gemasr.moviesapp.mvibase
 /**
  * Immutable object resulting of a processed business logic.
  */

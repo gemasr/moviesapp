@@ -5,7 +5,17 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".movieslist.MoviesListActivity">
+    tools:context=".movieslist.MovieDetailActivity">
+
+
+    <FrameLayout
+        android:id="@+id/movies_list_activity_movie"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/navigation"
+        />
 
     <TextView
         android:id="@+id/message"

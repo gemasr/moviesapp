@@ -38,4 +38,17 @@ class LocalMoviesDataSource(val moviesDao:MoviesDao):MoviesDataSource{
                     }
                 }
     }
+
+    override fun getByType(page: Int, type: MovieListType): Single<List<Movie>> {
+        return when(type){
+            MovieListType.POPULAR -> getPopularMovies(page)
+            MovieListType.UPCOMING -> getUpcomingMovies(page)
+            MovieListType.TOP_RATED -> getTopRatedMovies(page)
+        }
+    }
+
+    override fun getMovieById(id: Int, type:MovieListType): Single<Movie> {
+        return moviesDao.findMovie(id.toString(), type.value)
+                .map{ localMovie-> localMovie.getMovieFromLocalMovie() }
+    }
 }
