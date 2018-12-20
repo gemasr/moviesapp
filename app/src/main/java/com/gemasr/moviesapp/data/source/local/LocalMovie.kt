@@ -1,16 +1,15 @@
 package com.gemasr.moviesapp.data.source.local
 
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.PrimaryKey
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.gemasr.moviesapp.data.model.Movie
 
-@Entity(tableName = "movies")
-data class LocalMovie (@PrimaryKey val id: Int,
+@Entity(tableName = "movies", primaryKeys = ["id", "type"])
+data class LocalMovie (val id: Int,
                        val posterpath:String?,
                        val adult:Boolean,
                        val overview:String,
                        val releaseDate:String,
-                       val genreIds:List<String>,
                        val originalTitle: String,
                        val originalLanguage: String,
                        val title:String,
@@ -30,7 +29,6 @@ data class LocalMovie (@PrimaryKey val id: Int,
                 adult = adult,
                 overview = overview,
                 releaseDate = releaseDate,
-                genreIds = genreIds,
                 originalTitle = originalTitle,
                 originalLanguage = originalLanguage,
                 title = title,
@@ -38,7 +36,8 @@ data class LocalMovie (@PrimaryKey val id: Int,
                 popularity = popularity,
                 voteCount = voteCount,
                 video = video,
-                voteAverage = voteAverage
+                voteAverage = voteAverage,
+                genreIds = null
                 )
     }
 
@@ -50,7 +49,6 @@ data class LocalMovie (@PrimaryKey val id: Int,
                     adult = remoteMovie.adult,
                     overview = remoteMovie.overview,
                     releaseDate = remoteMovie.releaseDate,
-                    genreIds = remoteMovie.genreIds,
                     originalTitle = remoteMovie.originalTitle,
                     originalLanguage = remoteMovie.originalLanguage,
                     title = remoteMovie.title,

@@ -2,6 +2,8 @@ package com.gemasr.moviesapp.api
 
 import com.gemasr.moviesapp.BuildConfig
 import com.gemasr.moviesapp.api.response.MoviesListResponse
+import com.gemasr.moviesapp.data.model.Movie
+import com.gemasr.moviesapp.data.source.local.MovieListType
 import com.google.gson.GsonBuilder
 import io.reactivex.Single
 import okhttp3.OkHttpClient
@@ -9,13 +11,17 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import okhttp3.HttpUrl
+
+
 
 
 class MoviesApiService : IMoviesApiService {
 
-    val service = createService()
+    val retrofit:Retrofit
+    val service:MoviesApi
 
-    private fun createService():MoviesApi {
+    constructor(baseUrl:String=BuildConfig.MOV_API_URL){
 
         val httpClient = OkHttpClient.Builder()
                 .readTimeout(30, TimeUnit.SECONDS)
@@ -24,7 +30,7 @@ class MoviesApiService : IMoviesApiService {
                     val originalHttpUrl = original.url()
 
                     val url = originalHttpUrl.newBuilder()
-                            .addQueryParameter("apikey", BuildConfig.MOV_API_KEY)
+                            .addQueryParameter("api_key", BuildConfig.MOV_API_KEY)
                             .build()
 
                     val requestBuilder = original.newBuilder()
@@ -37,14 +43,14 @@ class MoviesApiService : IMoviesApiService {
 
         val gson = GsonBuilder().setLenient().create()
 
-        return Retrofit.Builder()
-                .baseUrl(BuildConfig.MOV_API_URL)
+        retrofit = Retrofit.Builder()
+                .baseUrl(baseUrl)
                 .client(httpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()
-                .create(MoviesApi::class.java)
 
+        service = retrofit.create(MoviesApi::class.java)
     }
 
 
@@ -60,7 +66,7 @@ class MoviesApiService : IMoviesApiService {
         return service.getTopRatedMovies(page)
     }
 
-
-
-
+    override fun getMovieById(movieId: Int, type: MovieListType): Single<Movie> {
+        return service.getMovieById(movieId)
+    }
 }

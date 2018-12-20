@@ -1,5 +1,6 @@
 package com.gemasr.moviesapp.movieslist
 
+import androidx.lifecycle.ViewModel
 import com.gemasr.moviesapp.data.source.local.MovieListType
 import com.gemasr.moviesapp.ext.notOfType
 import com.gemasr.moviesapp.mvibase.MviViewModel
@@ -10,10 +11,13 @@ import io.reactivex.subjects.PublishSubject
 
 class MovieDetailViewModel(
         private val actionProcessorHolder: MovieDetailProcessor
-): MviViewModel<MovieDetailIntent, MovieDetailViewState> {
+): ViewModel(), MviViewModel<MovieDetailIntent, MovieDetailViewState> {
 
     private val intentsSubject: PublishSubject<MovieDetailIntent> = PublishSubject.create()
     private val statesObservable: Observable<MovieDetailViewState> = compose()
+
+    var movieId:Int? = null
+    var type:MovieListType = MovieListType.POPULAR
 
 
     override fun processIntents(intents: Observable<MovieDetailIntent>) {
@@ -41,6 +45,14 @@ class MovieDetailViewModel(
         }
     }
 
+    fun getTypeFromInt(typeInt: Int) {
+        type = when(typeInt){
+            1 -> MovieListType.POPULAR
+            2 -> MovieListType.TOP_RATED
+            3 -> MovieListType.UPCOMING
+            else -> MovieListType.POPULAR
+        }
+    }
 
 
     companion object {

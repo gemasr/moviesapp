@@ -28,14 +28,7 @@ class MovieDetailProcessor(val repository: MoviesRepository) {
                 actions.publish { shared ->
                             shared.ofType(MovieDetailAction.LoadMovieDetailAction::class.java)
                                     .compose(loadMovieProcessor)
-                                    .mergeWith(
-                                            shared.filter { v ->
-                                                v !is MovieDetailAction.LoadMovieDetailAction
-                                            }.flatMap { w ->
-                                                Observable.error<MovieDetailResult>(
-                                                        IllegalArgumentException("Unknown Action type: $w"))
-                                            }
-                                    )
+                                    .cast(MovieDetailResult::class.java)
 
                 }
             }

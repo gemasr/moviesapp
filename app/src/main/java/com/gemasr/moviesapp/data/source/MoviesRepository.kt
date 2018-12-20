@@ -1,30 +1,32 @@
 package com.gemasr.moviesapp.data.source
 
+import android.util.Log
 import com.gemasr.moviesapp.data.model.Movie
 import com.gemasr.moviesapp.data.source.local.LocalMoviesDataSource
 import com.gemasr.moviesapp.data.source.local.MovieListType
 import com.gemasr.moviesapp.data.source.remote.RemoteMoviesDataSource
+import io.reactivex.Maybe
+import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import org.jetbrains.anko.AnkoLogger
 
 class MoviesRepository(val remoteMoviesDataSource: RemoteMoviesDataSource,
-                       val localMoviesDataSource: LocalMoviesDataSource):MoviesDataSource {
+                       val localMoviesDataSource: LocalMoviesDataSource):MoviesDataSource, AnkoLogger {
 
 
     fun getAndCacheMovies(page:Int, type:MovieListType): List<Movie>{
 
-        val movies = when(type){
-            MovieListType.POPULAR -> remoteMoviesDataSource.getPopularMovies(page)
-            MovieListType.TOP_RATED -> remoteMoviesDataSource.getTopRatedMovies(page)
-            MovieListType.UPCOMING -> remoteMoviesDataSource.getUpcomingMovies(page)
-        }.doAfterSuccess {
-            it.forEach {movie->
-                localMoviesDataSource.cacheMovie(movie, page, type)
-            }
-        }
+        return remoteMoviesDataSource.getByType(page, type)
+                .doOnSuccess {
+                    it.forEach {movie->
+                        localMoviesDataSource.cacheMovie(movie, page, type)
+                    }
+                }.doOnError{
+                    Log.i("Movies error", it.message)
+                }.blockingGet()
 
-        return movies.blockingGet()
     }
 
 
@@ -37,24 +39,42 @@ class MoviesRepository(val remoteMoviesDataSource: RemoteMoviesDataSource,
     }
 
     override fun getPopularMovies(page: Int): Single<List<Movie>> {
-        return localMoviesDataSource.getPopularMovies(page).onErrorReturn {
-            getAndCacheMovies(page, MovieListType.POPULAR)
-        }.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        return Observable.concat(localMoviesDataSource.getPopularMovies(page).toObservable()
+                , remoteMoviesDataSource.getPopularMovies(page).toObservable())
+                .filter{movies->
+                    movies.isNotEmpty()
+                }.first(listOf())
+                .doOnSuccess { movies ->
+                    movies.forEach {
+                        localMoviesDataSource.cacheMovie(it, page, MovieListType.POPULAR)
+                    }
+                }
     }
 
     override fun getUpcomingMovies(page: Int): Single<List<Movie>> {
-        return localMoviesDataSource.getUpcomingMovies(page).onErrorReturn {
-            getAndCacheMovies(page, MovieListType.UPCOMING)
-        }.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        return Observable.concat(localMoviesDataSource.getUpcomingMovies(page).toObservable()
+                , remoteMoviesDataSource.getUpcomingMovies(page).toObservable())
+                .filter{movies->
+                    movies.isNotEmpty()
+                }.first(listOf())
+                .doOnSuccess { movies ->
+                    movies.forEach {
+                        localMoviesDataSource.cacheMovie(it, page, MovieListType.UPCOMING)
+                    }
+                }
     }
 
     override fun getTopRatedMovies(page: Int): Single<List<Movie>> {
-        return localMoviesDataSource.getTopRatedMovies(page).onErrorReturn {
-            getAndCacheMovies(page, MovieListType.TOP_RATED)
-        }.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        return Observable.concat(localMoviesDataSource.getTopRatedMovies(page).toObservable()
+                , remoteMoviesDataSource.getTopRatedMovies(page).toObservable())
+                .filter{movies->
+                    movies.isNotEmpty()
+                }.first(listOf())
+                .doOnSuccess { movies ->
+                    movies.forEach {
+                        localMoviesDataSource.cacheMovie(it, page, MovieListType.TOP_RATED)
+                    }
+                }
     }
 
     override fun getMovieById(id: Int, type: MovieListType): Single<Movie> {

@@ -1,10 +1,10 @@
 package com.gemasr.moviesapp.data.source.local
 
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.RoomDatabase
+import androidx.room.Database
+import androidx.room.RoomDatabase
 
-@Database(entities = [LocalMovie::class], version = 1)
-abstract class MoviesDatabase:RoomDatabase() {
+@Database(entities = [LocalMovie::class], version = 1, exportSchema = true)
+abstract class MoviesDatabase: RoomDatabase() {
 
     abstract fun MoviesDao():MoviesDao
 

@@ -1,8 +1,11 @@
 package com.gemasr.moviesapp.data.source.local
 
+import android.util.Log
 import com.gemasr.moviesapp.data.model.Movie
 import com.gemasr.moviesapp.data.source.MoviesDataSource
 import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 class LocalMoviesDataSource(val moviesDao:MoviesDao):MoviesDataSource{
 
@@ -10,6 +13,12 @@ class LocalMoviesDataSource(val moviesDao:MoviesDao):MoviesDataSource{
     fun cacheMovie(movie:Movie, page:Int, type:MovieListType){
         val localMovie = LocalMovie.buildLocalMovieFromMovie(movie, page, type)
         moviesDao.insertMovie(localMovie)
+    }
+
+    fun cacheMovies(movies:List<Movie>, page:Int, type:MovieListType){
+        movies.forEach {
+            cacheMovie(it, page, type)
+        }
     }
 
     override fun getPopularMovies(page: Int): Single<List<Movie>> {

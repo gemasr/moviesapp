@@ -1,16 +1,17 @@
 package com.gemasr.moviesapp.data.source.local
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.Query
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import io.reactivex.Completable
 import io.reactivex.Single
 
 @Dao
 interface MoviesDao {
 
-    @Insert
-    fun insertMovie(movie:LocalMovie): Completable
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertMovie(movie:LocalMovie)
 
     @Query("SELECT * from movies WHERE id = :id AND type = :type")
     fun findMovie(id:String, type:Int): Single<LocalMovie>

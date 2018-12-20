@@ -2,6 +2,7 @@ package com.gemasr.moviesapp.movieslist
 
 import com.gemasr.moviesapp.data.source.MoviesRepository
 import io.reactivex.Observable
+import io.reactivex.ObservableSource
 import io.reactivex.ObservableTransformer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -28,15 +29,7 @@ class MoviesListProcessorHolder(val repository: MoviesRepository) {
                 actions.publish { shared ->
                             shared.ofType(MoviesListAction.LoadMoviesAction::class.java)
                                     .compose(loadMoviesProcessor)
-                                    .mergeWith(
-                                            shared.filter { v ->
-                                                v !is MoviesListAction.LoadMoviesAction
-                                            }.flatMap { w ->
-                                                Observable.error<MovieDetailResult>(
-                                                        IllegalArgumentException("Unknown Action type: $w"))
-                                            }
-                                    )
-
+                                    .cast(MoviesListResult::class.java)
                 }
             }
 

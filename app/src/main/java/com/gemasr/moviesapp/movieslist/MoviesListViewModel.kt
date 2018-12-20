@@ -1,5 +1,6 @@
 package com.gemasr.moviesapp.movieslist
 
+import androidx.lifecycle.ViewModel
 import com.gemasr.moviesapp.data.source.local.MovieListType
 import com.gemasr.moviesapp.ext.notOfType
 import com.gemasr.moviesapp.mvibase.MviViewModel
@@ -10,7 +11,10 @@ import io.reactivex.subjects.PublishSubject
 
 class MoviesListViewModel(
         private val actionProcessorHolder: MoviesListProcessorHolder
-): MviViewModel<MoviesListIntent, MoviesListViewState> {
+): ViewModel(), MviViewModel<MoviesListIntent, MoviesListViewState> {
+
+    var type: MovieListType = MovieListType.POPULAR
+    var page = 1
 
     private val intentsSubject: PublishSubject<MoviesListIntent> = PublishSubject.create()
     private val statesObservable: Observable<MoviesListViewState> = compose()
@@ -49,7 +53,7 @@ class MoviesListViewModel(
     private fun actionFromIntent(intent: MoviesListIntent): MoviesListAction {
         return when (intent) {
             is MoviesListIntent.LoadMoviesIntent -> MoviesListAction.LoadMoviesAction(intent.page, intent.type)
-            is MoviesListIntent.InitialIntent -> MoviesListAction.LoadMoviesAction(1, MovieListType.POPULAR)
+            is MoviesListIntent.InitialIntent -> MoviesListAction.LoadMoviesAction(1, type)
         }
     }
 
@@ -68,8 +72,8 @@ class MoviesListViewModel(
                                 moviesType = result.type
                         )
                     }
-                    is MoviesListResult.LoadMoviesResult.Failure -> previousState.copy(isLoading = false, error = result.error)
-                    is MoviesListResult.LoadMoviesResult.InFlight -> previousState.copy(isLoading = true)
+                    is MoviesListResult.LoadMoviesResult.Failure -> previousState.copy(isLoading = false, addedMovies = listOf(), error = result.error)
+                    is MoviesListResult.LoadMoviesResult.InFlight -> previousState.copy(isLoading = true, addedMovies = listOf())
                 }
 
             }
