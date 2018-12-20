@@ -32,17 +32,6 @@ android {
         }
     }
 
-    flavorDimensions "version"
-    productFlavors {
-        realApi {
-            dimension "version"
-            buildConfigField("String", "MOV_API_URL", "\"https://api.themoviedb.org/\"")
-        }
-        mockApi {
-            dimension "version"
-            buildConfigField("String", "MOV_API_URL", "\"http://localhost:8000/\"")
-        }
-    }
 
     packagingOptions {
         exclude 'META-INF/proguard/androidx-annotations.pro'
