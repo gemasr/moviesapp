@@ -15,13 +15,7 @@ Aplicación en la que se puede visualizar la información de tres categorías (p
 
 Permite visualizar el detalle de cada película
 
-La información descargada es cacheada internamente
-
-
-## Nota importante
-
-- Para ejectuar la app se debe seleccionar el buildvariant realApiDebug
-- Para ejectuar los tests se debe seleccionar el buildvariant mockApiDebug
+La información descargada es cacheada internamente (la app intenta obtener la info primero de la base de datos, y si no está disponible, la solicita a la API)
 
 
 ## Arquitectura
@@ -78,12 +72,6 @@ Mis libros favoritos al respecto son: Clean Code (Robert C. Martin), The Pragmat
 # ENGLISH
 
 Movies app that consumes the Movie Database API (using a MVI architecture)
-
-
-## Important note
-
-- To execute the app use the realApiDebug
-- To execute the tests use the mockApiDebug
 
 
 ## Architecture
