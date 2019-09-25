@@ -17,6 +17,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "MOV_API_KEY", "\"37dd958745a1af979cdec940a25deef6\"")
         buildConfigField("String", "MOV_API_IMAGES_URL", "\"https://image.tmdb.org/t/p/w500\"")
+        buildConfigField("String", "MOV_API_URL", "\"https://api.themoviedb.org/\"")
 
         javaCompileOptions {
             annotationProcessorOptions {

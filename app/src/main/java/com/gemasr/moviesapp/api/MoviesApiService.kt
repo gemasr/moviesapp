@@ -21,7 +21,7 @@ class MoviesApiService : IMoviesApiService {
     val retrofit:Retrofit
     val service:MoviesApi
 
-    constructor(baseUrl:String=BuildConfig.MOV_API_URL){
+    constructor(baseUrl:String = BuildConfig.MOV_API_URL){
 
         val httpClient = OkHttpClient.Builder()
                 .readTimeout(30, TimeUnit.SECONDS)
